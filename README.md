@@ -5,6 +5,8 @@ A simple starter C project using [Criterion](https://github.com/Snaipe/Criterion
 ## Make targets
 
 * `make` to build the executable.
+* `make debug` to build debuggable executable.
+* `make release` to build release executable.
 * `make test` to build and run the test runner.
 * `make clean` to clean build artifacts.
 
