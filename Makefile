@@ -1,18 +1,29 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -Wpedantic -Werror -std=c11
-SRC = $(wildcard *.c)
+
+TARGET = playground
+SRC = $(filter-out $(TEST_SRC), $(wildcard *.c))
 OBJ = $(SRC:.c=.o)
-EXEC = playground
 
-all: $(EXEC)
+# Build unit tests foo_test.c for foo.c
+TEST_TARGET = test_runner
+TEST_SRC = $(wildcard *_test.c)
+TEST_OBJ = $(TEST_SRC:.c=.o)
+TEST_TARGET_SRC = $(TEST_SRC:_test.c=.c)
+TEST_TARGET_OBJ = $(TEST_TARGET_SRC:.c=.o)
 
-$(EXEC): $(OBJ)
+$(TARGET): $(OBJ)
 	$(CC) $(CFLAGS) -o $@ $^
 
-%.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
+$(TEST_TARGET): $(TEST_OBJ) $(TEST_TARGET_OBJ)
+	$(CC) $(CFLAGS) -o $@ $^ -lcriterion
+
+all: $(TARGET)
+
+test: $(TEST_TARGET)
+	./$(TEST_TARGET)
 
 clean:
-	rm -f $(OBJ) $(EXEC)
+	rm -f $(OBJ) $(TARGET) $(TEST_OBJ) $(TEST_TARGET_OBJ) $(TEST_TARGET)
 
-.PHONY: all clean
+.PHONY: all test clean
